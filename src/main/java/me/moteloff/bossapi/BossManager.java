@@ -28,9 +28,6 @@ public class BossManager {
         if (schedulerTasksMap.get(builder) != null && !schedulerTasksMap.get(builder).isCancelled()) {return;}
 
         AtomicInteger time = new AtomicInteger(builder.getTimeBeforeSpawn());
-        int delay = 60*20*time.get();
-
-        if (extraspawn) { delay = 10; }
 
         for (Hologram hologram : bossesHolograms.getOrDefault(builder, new ArrayList<>())) {hologram.remove();}
         bossesHolograms.put(builder, new ArrayList<>());
@@ -66,7 +63,6 @@ public class BossManager {
             updateTimerHologram(builder, time.get());
             if (time.get() <= 0) {
                 for (Ability ability : builder.getAbilities()) {ability.initUsedTime();}
-
                 bossIsAlive.put(builder, true);
                 LivingEntity entity = builder.spawn();
                 damageMap.put(entity, new HashMap<>());
@@ -78,7 +74,7 @@ public class BossManager {
                     plugin.getServer().broadcastMessage(Formatter.translate(str.replace("%boss%", builder.getDisplayName())));
                 }
             }
-        }, delay, 60 * 20);
+        }, 60*20, 60 * 20);
         schedulerTasksMap.put(builder, task);
     }
 
