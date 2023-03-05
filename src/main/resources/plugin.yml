@@ -1,0 +1,7 @@
+name: BossAPI
+version: '${project.version}'
+main: me.moteloff.bossapi.BossAPI
+depend: [ ProtocolLib ]
+api-version: 1.16
+commands:
+  reloadcfg:
