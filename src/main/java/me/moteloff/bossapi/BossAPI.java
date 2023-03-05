@@ -21,7 +21,9 @@ public final class BossAPI extends JavaPlugin {
 
     public static HashMap<LivingEntity, EntityBuilder> entityMap;
     public static Set<LivingEntity> registeredBosses = new HashSet<>();
+    public static HashMap<String, EntityBuilder> stringConfigEntityBuilder;
     public static HashMap<LivingEntity, HashMap<Player, Double>> damageMap;
+    public static HashMap<EntityBuilder, Boolean> bossIsAlive;
 
 
     @Override
@@ -32,6 +34,8 @@ public final class BossAPI extends JavaPlugin {
         registeredBosses = new HashSet<>();
         entityMap = new HashMap<>();
         damageMap = new HashMap<>();
+        bossIsAlive = new HashMap<>();
+        stringConfigEntityBuilder = new HashMap<>();
 
         getServer().getPluginManager().registerEvents(new JoinListeners(),this);
         getServer().getPluginManager().registerEvents(new DamageListener(),this);

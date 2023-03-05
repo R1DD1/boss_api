@@ -62,23 +62,41 @@ public class EntityBuilder {
         this.health = health;
         return this;
     }
-
+    /**
+     * Устанавливает DamageCause которые игнорируются при нанесении урона
+     *
+     * @param ignoredDamageType vararg DamageCause которые игнорируются при нанесении урона по LivingEntity
+     */
     public EntityBuilder ignoredDamageType(EntityDamageEvent.DamageCause... ignoredDamageType) {
         this.ignoredDamageType = Arrays.asList(ignoredDamageType);
         return this;
     }
-
+    /**
+     * Возвращает DamageCause которые игнорируются при нанесении урона
+     *
+     */
     public List<EntityDamageEvent.DamageCause> getIgnoredDamageType() {
         return this.ignoredDamageType;
     }
-
+    /**
+     * Устанавливает EntityType на которые может агриться LivingEntity
+     *
+     * @param targets vararg EntityType на которых может агриться LivingEntity
+     */
     public EntityBuilder targets(EntityType... targets) {
         this.targets = Arrays.asList(targets);
         return this;
     }
-
+    /**
+     * Возвращает EntityType на которые может агриться LivingEntity
+     *
+     */
     public List<EntityType> getTargets() {
         return this.targets;
+    }
+
+    public List<Ability> getAbilities() {
+        return this.abilities;
     }
 
     /**

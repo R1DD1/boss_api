@@ -34,13 +34,14 @@ public class ConfigBosses {
                 bossConfig.getDouble("spawn_location.z")
         );
         int timeBeforeSpawn = bossConfig.getInt("time_before_spawn");
-
-        return new EntityBuilder(entityType)
+        EntityBuilder builder =  new EntityBuilder(entityType)
                 .setDisplayName(displayName)
                 .setHealth(health)
                 .setDamage(damage)
                 .setSpawnLocation(spawnLocation)
                 .setTimeBeforeSpawn(timeBeforeSpawn);
+        BossAPI.stringConfigEntityBuilder.put(bossName, builder);
+        return builder;
     }
 
 

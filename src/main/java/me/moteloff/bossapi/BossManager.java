@@ -1,5 +1,6 @@
 package me.moteloff.bossapi;
 
+import me.moteloff.bossapi.abilities.Ability;
 import me.moteloff.bossapi.hologram.Hologram;
 import me.moteloff.bossapi.utils.EntityBuilder;
 import me.moteloff.bossapi.utils.Formatter;
@@ -23,11 +24,15 @@ public class BossManager {
     public static final Map<EntityBuilder, List<Hologram>> bossesHolograms = new HashMap<>();
     private static final Map<EntityBuilder, BukkitTask> schedulerTasksMap = new HashMap<>();
 
-    public static void register(EntityBuilder builder) {
+    public static void register(EntityBuilder builder, boolean extraspawn) {
+        if (schedulerTasksMap.get(builder) != null && !schedulerTasksMap.get(builder).isCancelled()) {return;}
+
+        AtomicInteger time = new AtomicInteger(builder.getTimeBeforeSpawn());
+        int delay = 60*20*time.get();
+
+        if (extraspawn) { delay = 10; }
+
         for (Hologram hologram : bossesHolograms.getOrDefault(builder, new ArrayList<>())) {hologram.remove();}
-
-        if (schedulerTasksMap.containsKey(builder)) {schedulerTasksMap.get(builder).cancel();}
-
         bossesHolograms.put(builder, new ArrayList<>());
         Location location = builder.getSpawnLocation().clone();
         List<String> hologramLines = plugin.getConfig().getStringList("hologram");
@@ -44,36 +49,44 @@ public class BossManager {
                 LivingEntity entity = (LivingEntity) e.getEntity();
                 if (e.getDamager() instanceof Player) {
                     if (registeredBosses.contains(entity)){
-                        if (e.getDamage() >= entity.getHealth()) {
-                            register(entityMap.get(entity));
-                            updateHolograms();
+                        if (entityMap.get(entity) == builder) {
+                            if (e.getDamage() >= entity.getHealth()) {
+                                register(entityMap.get(entity), false);
+                                bossIsAlive.put(builder, true);
+                                updateHolograms();
+                            }
                         }
                     }
                 }
             }
         }, BossAPI.getInstance());
-        AtomicInteger time = new AtomicInteger(builder.getTimeBeforeSpawn());
-        BukkitTask task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
 
+        BukkitTask task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             time.getAndDecrement();
             updateTimerHologram(builder, time.get());
             if (time.get() <= 0) {
-                System.out.println(Bukkit.getScheduler().getPendingTasks().size());
+                for (Ability ability : builder.getAbilities()) {ability.initUsedTime();}
+
+                bossIsAlive.put(builder, true);
                 LivingEntity entity = builder.spawn();
                 damageMap.put(entity, new HashMap<>());
+                unregister(builder);
                 registeredBosses.add(entity);
+
                 for (Hologram hologram : bossesHolograms.get(builder)) {hologram.remove();}
                 for (String str : plugin.getConfig().getStringList("messages.boss_spawn")) {
                     plugin.getServer().broadcastMessage(Formatter.translate(str.replace("%boss%", builder.getDisplayName())));
                 }
             }
-        }, 60 * 20, 60 * 20);
+        }, delay, 60 * 20);
         schedulerTasksMap.put(builder, task);
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            if (schedulerTasksMap.containsKey(builder)) {
-                schedulerTasksMap.get(builder).cancel();
-            }
-        }, 20L*60*builder.getTimeBeforeSpawn());
+    }
+
+    public static void unregister(EntityBuilder builder) {
+        while (schedulerTasksMap.containsKey(builder)) {
+            schedulerTasksMap.get(builder).cancel();
+            schedulerTasksMap.remove(builder);
+        }
     }
 
     private static Hologram addHologram(Location location) {

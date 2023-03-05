@@ -22,13 +22,17 @@ public class Ability {
         this.triggerCondition = triggerCondition;
         this.action = action;
         this.cooldownTime = cooldownTime;
-        this.lastUsedTime = 0;
+        this.lastUsedTime = System.currentTimeMillis();
         this.stack = new ArrayDeque<>();
 
     }
 
     public void setCooldownTime(long cooldownTime) {
         this.cooldownTime = cooldownTime;
+    }
+
+    public void initUsedTime() {
+        this.lastUsedTime = System.currentTimeMillis();
     }
 
     public boolean isReady(LivingEntity entity) {
