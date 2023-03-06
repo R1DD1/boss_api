@@ -9,7 +9,9 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 
 public class ActionBarUtil {
-
+    /**
+     * Отправка пакета с ActionBar одному игроку этой голограммы
+     */
     public static void sendActionBar(Player player, String message) {
         PacketContainer packet = ProtocolLibrary.getProtocolManager()
                 .createPacket(PacketType.Play.Server.CHAT);

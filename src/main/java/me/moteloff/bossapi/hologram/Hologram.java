@@ -23,7 +23,6 @@ public class Hologram {
         this.players = new ArrayList<>();
         this.armorStand = location.getWorld().spawn(location, ArmorStand.class);
 
-        // Настраиваем голограмму
         armorStand.setGravity(false);
         armorStand.setCanPickupItems(false);
         armorStand.setVisible(false);
@@ -31,20 +30,23 @@ public class Hologram {
         armorStand.setCustomName(text);
         holograms.add(this);
 
-        // Отправляем пакет о спавне голограммы для каждого игрока
         PacketPlayOutSpawnEntityLiving packet = new PacketPlayOutSpawnEntityLiving(((CraftArmorStand) armorStand).getHandle());
         for (Player player : Bukkit.getOnlinePlayers()) {
             ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
         }
     }
-
+    /**
+     * Отправка пакета игроку
+     */
     public void addPlayer(Player player) {
         players.add(player);
         PacketPlayOutSpawnEntityLiving packet = new PacketPlayOutSpawnEntityLiving(((CraftArmorStand) armorStand).getHandle());
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
 
     }
-
+    /**
+     * Отправка пакета с названием арморстэнда всем игрокам этой голограммы
+     */
     public void setText(String text) {
         EntityArmorStand armorStand = ((CraftArmorStand) this.armorStand).getHandle();
 
@@ -59,7 +61,9 @@ public class Hologram {
         }
         this.armorStand.setVisible(false);
     }
-
+    /**
+     * Отправка пакета с названием арморстэнда одному игроку этой голограммы
+     */
     public void setText(Player player, String text) {
         EntityArmorStand armorStand = ((CraftArmorStand) this.armorStand).getHandle();
 
@@ -72,7 +76,9 @@ public class Hologram {
         connection.sendPacket(new PacketPlayOutEntityMetadata(armorStand.getId(), armorStand.getDataWatcher(), true));
         this.armorStand.setVisible(false);
     }
-
+    /**
+     * Отправка пакета с удалением арморстэнда всем игрокам этой голограммы
+     */
     public void remove() {
         // Удаляем голограмму для каждого игрока
         PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(((CraftArmorStand) armorStand).getHandle().getId());

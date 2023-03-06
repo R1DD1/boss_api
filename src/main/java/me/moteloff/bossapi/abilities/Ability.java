@@ -26,20 +26,34 @@ public class Ability {
         this.stack = new ArrayDeque<>();
 
     }
-
+    /**
+     * Установка нового значения для перезарядки способности
+     *
+     */
     public void setCooldownTime(long cooldownTime) {
         this.cooldownTime = cooldownTime;
     }
-
+    /**
+     * Инициализация способности, момент начала отсчета использование способности
+     *
+     */
     public void initUsedTime() {
         this.lastUsedTime = System.currentTimeMillis();
     }
-
+    /**
+     * Проверка на готовность к использованию способности данной сущности
+     *
+     * @param entity данная сущность
+     */
     public boolean isReady(LivingEntity entity) {
         long currentTime = System.currentTimeMillis();
         return (currentTime - lastUsedTime >= cooldownTime) && triggerCondition.test(entity);
     }
-
+    /**
+     * Использование способности данной сущности
+     *
+     * @param entity данная сущность
+     */
     public void use(LivingEntity entity) {
         lastUsedTime = System.currentTimeMillis();
         if (stack.isEmpty()) {action.accept(entity);}

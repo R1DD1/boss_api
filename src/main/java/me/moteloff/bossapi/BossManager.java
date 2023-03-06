@@ -23,7 +23,12 @@ public class BossManager {
     private static final BossAPI plugin = BossAPI.getInstance();
     public static final Map<EntityBuilder, List<Hologram>> bossesHolograms = new HashMap<>();
     private static final Map<EntityBuilder, BukkitTask> schedulerTasksMap = new HashMap<>();
-
+    /**
+     * Регистрация LivingEntity, который будет появляться в виде босса
+     *
+     * @param builder EntityBuilder который отвечает за создание данной сущности
+     * @param extraspawn Boolean значение, которое отвечает за моментальнй спавн
+     */
     public static void register(EntityBuilder builder, boolean extraspawn) {
         if (schedulerTasksMap.get(builder) != null && !schedulerTasksMap.get(builder).isCancelled()) {return;}
 
@@ -77,24 +82,40 @@ public class BossManager {
         }, 60*20, 60 * 20);
         schedulerTasksMap.put(builder, task);
     }
-
+    /**
+     * Отмена регистрации LivingEntity, который будет появляться в виде босса
+     *
+     * @param builder EntityBuilder который отвечает за создание данной сущности
+     */
     public static void unregister(EntityBuilder builder) {
         while (schedulerTasksMap.containsKey(builder)) {
             schedulerTasksMap.get(builder).cancel();
             schedulerTasksMap.remove(builder);
         }
     }
-
+    /**
+     * Создание голограммы на месте спавна сущности
+     *
+     * @param location место спавна сущности
+     */
     private static Hologram addHologram(Location location) {
         return new Hologram(location, " ");
     }
-
+    /**
+     * Обновление голограммы таймера определенного EntityBuilder
+     *
+     * @param builder данный EntityBuilder
+     * @param time новое время
+     */
     private static void updateTimerHologram(EntityBuilder builder, int time) {
         bossesHolograms.get(builder).get(1).setText(Formatter.translate(plugin.getConfig().getStringList("hologram").get(1)
                 .replace("%boss%", builder.getDisplayName())
                 .replace("%time%", String.valueOf(time))));
     }
-
+    /**
+     * Обновление голограмм определенного EntityBuilder
+     *
+     */
     private static void updateHolograms() {
         for (EntityBuilder builder: bossesHolograms.keySet()) {
             List<Hologram> holograms = bossesHolograms.get(builder);
