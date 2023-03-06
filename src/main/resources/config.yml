@@ -1,0 +1,41 @@
+bosses:
+  summoner:
+    spawn_location:
+      world: world
+      x: -150
+      y: 75
+      z: 65
+    display_name: '&cПризыватель'
+    health: 100
+    damage: 10
+    time_before_spawn: 2
+  destroyer:
+    spawn_location:
+      world: world
+      x: -140
+      y: 75
+      z: 65
+    display_name: '&cРазоритель'
+    health: 100
+    damage: 10
+    time_before_spawn: 2
+actionbar: "&c%boss% %cur_h%❤"
+hologram: 
+ - "Привет %nick%!"
+ - "&6%boss% &fпоявится через &6%time% &fминут(-ы)"
+database_path: 'jdbc:sqlite:C:\Users\moteloff\Desktop\localhostmain\plugins\BossAPI\boss_data.s3db'
+messages:
+    boss_spawn: 
+        - ''
+        - "&fБосс %boss% &fпоявился"
+        - ''
+    boss_kill: 
+     - '&fБосс &6%display_name% &fбыл убит!!!!'
+     - '&fБольше всего урона:'
+     - '  &8- &f 1 место %player_top1% &c%damage% урона'
+     - '  &8- &f 2 место %player_top2% &c%damage% урона'
+     - '  &8- &f 3 место %player_top3% &c%damage% урона'
+    unknown_boss: '&fБосс &c%boss% не найден в базе.'
+    boss_is_alive: "&cБосс %boss% жив, убейте перед спавном"
+    error_cmd: '&cИспользуйте /extraspawn *имя босса*'
+    success_reload: '&fКонфиг перезагружен!'
